@@ -40,7 +40,7 @@ public class MainHook implements IXposedHookLoadPackage {
         XposedHelpers.setStaticObjectField(Build.class, "TAGS", "release-keys");
         XposedHelpers.setStaticObjectField(Build.class, "TYPE", "user");
         XposedHelpers.setStaticObjectField(Build.class, "PRODUCT", "caiman");
-        XposedHelpers.setStaticObjectField(Build.class, "MODEL", "caiman");
+        XposedHelpers.setStaticObjectField(Build.class, "MODEL", "Pixel 9 Pro");
         XposedHelpers.setStaticObjectField(Build.class, "BOARD", "caiman");
         XposedHelpers.setStaticObjectField(Build.class, "ID", "AP4A.250105.002");
         XposedHelpers.setStaticObjectField(Build.class, "FINGERPRINT",
