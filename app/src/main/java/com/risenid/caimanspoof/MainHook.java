@@ -36,28 +36,28 @@ public class MainHook implements IXposedHookLoadPackage {
         // Set build properties
         XposedHelpers.setStaticObjectField(Build.class, "MANUFACTURER", "Google");
         XposedHelpers.setStaticObjectField(Build.class, "BRAND", "google");
-        XposedHelpers.setStaticObjectField(Build.class, "DEVICE", "caiman");
+        XposedHelpers.setStaticObjectField(Build.class, "DEVICE", "mustang");
         XposedHelpers.setStaticObjectField(Build.class, "TAGS", "release-keys");
         XposedHelpers.setStaticObjectField(Build.class, "TYPE", "user");
-        XposedHelpers.setStaticObjectField(Build.class, "PRODUCT", "caiman");
-        XposedHelpers.setStaticObjectField(Build.class, "MODEL", "Pixel 9 Pro");
-        XposedHelpers.setStaticObjectField(Build.class, "BOARD", "caiman");
-        XposedHelpers.setStaticObjectField(Build.class, "ID", "AP4A.250105.002");
+        XposedHelpers.setStaticObjectField(Build.class, "PRODUCT", "mustang");
+        XposedHelpers.setStaticObjectField(Build.class, "MODEL", "Pixel 10 Pro");
+        XposedHelpers.setStaticObjectField(Build.class, "BOARD", "mustang");
+        XposedHelpers.setStaticObjectField(Build.class, "ID", "AP4A.250805.002");
         XposedHelpers.setStaticObjectField(Build.class, "FINGERPRINT",
-                "google/caiman/caiman:15/AP4A.250105.002/12701944:user/release-keys");
-        XposedHelpers.setStaticObjectField(Build.class, "bootimage.id", "AP4A.250105.002");
+                "google/mustang/mustang:16/AP4A.250805.002/12701944:user/release-keys");
+        XposedHelpers.setStaticObjectField(Build.class, "bootimage.id", "AP4A.250805.002");
         XposedHelpers.setStaticObjectField(Build.class, "bootimage.fingerprint",
-                "google/caiman/caiman:15/AP4A.250105.002/12701944:user/release-keys");
-        XposedHelpers.setStaticObjectField(Build.class, "vendor.id", "AP4A.250105.002");
+                "google/mustang/mustang:16/AP4A.250805.002/12701944:user/release-keys");
+        XposedHelpers.setStaticObjectField(Build.class, "vendor.id", "AP4A.250805.002");
         XposedHelpers.setStaticObjectField(Build.class, "vendor.fingerprint",
-                "google/caiman/caiman:15/AP4A.250105.002/12701944:user/release-keys");
+                "google/mustang/mustang:15/AP4A.250805.002/12701944:user/release-keys");
 
         try {
             System.setProperty("ro.product.vendor.brand", "google");
-            System.setProperty("ro.product.vendor.device", "caiman");
+            System.setProperty("ro.product.vendor.device", "mustang");
             System.setProperty("ro.product.vendor.manufacturer", "google");
-            System.setProperty("ro.product.vendor.model", "caiman");
-            System.setProperty("ro.product.vendor.name", "caiman");
+            System.setProperty("ro.product.vendor.model", "mustang");
+            System.setProperty("ro.product.vendor.name", "mustang");
         } catch (Exception e) {
             XposedBridge.log("Failed to set vendor properties: " + e.getMessage());
         }
