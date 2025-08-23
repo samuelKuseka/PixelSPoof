@@ -1,4 +1,27 @@
 <resources>
-    <string name="app_name">CaimanSpoof</string>
-    <string name="module_description">Spoof some apps to Pixel 8 Pro for extra features</string>
+    <string name="app_name">PixelSpoof</string>
+    <string name="module_description">Advanced Android Device Spoofing with Dynamic Configuration</string>
+    <string name="xposed_description">Spoof device properties to appear as various Pixel devices with advanced anti-detection features</string>
+    
+    <!-- UI Strings -->
+    <string name="select_device_profile">Select Device Profile</string>
+    <string name="stealth_mode">Stealth Mode</string>
+    <string name="stealth_mode_desc">Enable advanced anti-detection features</string>
+    <string name="auto_update">Auto Update</string>
+    <string name="auto_update_desc">Automatically download new device profiles</string>
+    <string name="refresh_profiles">Refresh Profiles</string>
+    <string name="loading">Loading...</string>
+    <string name="error_loading_profiles">Error loading profiles. Check network connection.</string>
+    <string name="profile_applied">Device profile applied successfully</string>
+    <string name="xposed_not_active">Xposed framework not detected. Module will not function.</string>
+    
+    <!-- Device Profiles -->
+    <string name="current_profile">Current Profile</string>
+    <string name="no_profile_selected">No profile selected</string>
+    <string name="default_profile">Default (No spoofing)</string>
+    
+    <!-- Status Messages -->
+    <string name="module_active">PixelSpoof is active</string>
+    <string name="module_inactive">PixelSpoof is inactive</string>
+    <string name="reboot_required">Reboot required for changes to take effect</string>
 </resources>

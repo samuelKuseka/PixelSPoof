@@ -14,5 +14,5 @@ dependencyResolutionManagement {
         flatDir {dirs '82'}
     }
 }
-rootProject.name = "CaimanSpoof"
+rootProject.name = "PixelSpoof"
 include ':app'

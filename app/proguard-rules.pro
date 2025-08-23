@@ -1,21 +1,55 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# PixelSpoof ProGuard Rules
+# Kotlin & Coroutines
+-dontwarn kotlin.**
+-keep class kotlin.** { *; }
+-keep class kotlinx.coroutines.** { *; }
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Jetpack Compose
+-keep class androidx.compose.** { *; }
+-keep class androidx.lifecycle.** { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Xposed Framework
+-keep class de.robv.android.xposed.** { *; }
+-keep class io.github.libxposed.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Main Hook Class (Entry Point)
+-keep class com.kashi.caimanspoof.MainHook { *; }
+-keep class com.kashi.caimanspoof.MainHook$* { *; }
+
+# Device Profile & Configuration
+-keep class com.kashi.caimanspoof.DeviceProfile { *; }
+-keep class com.kashi.caimanspoof.ConfigManager { *; }
+-keep class com.kashi.caimanspoof.StealthManager { *; }
+
+# OkHttp & Networking
+-keep class okhttp3.** { *; }
+-keep class okio.** { *; }
+
+# Android System Properties (Reflection)
+-keep class android.os.SystemProperties { *; }
+-keep class android.os.Build { *; }
+-keep class android.os.Build$* { *; }
+
+# JSON Parsing
+-keep class org.json.** { *; }
+
+# Obfuscation & Security
+-obfuscationdictionary dictionary.txt
+-classobfuscationdictionary dictionary.txt
+-packageobfuscationdictionary dictionary.txt
+
+# Remove Logging
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+    public static *** i(...);
+}
+
+# Anti-Reverse Engineering
+-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod
+-renamesourcefileattribute SourceFile
+-adaptresourcefilenames    **.properties,**.gif,**.jpg,**.png
+-adaptresourcefilecontents **.properties,META-INF/MANIFEST.MF
+
+# String Encryption (Manual Implementation)
+-keep class com.kashi.caimanspoof.StringObfuscator { *; }
