@@ -59,6 +59,9 @@ class MainHook : IXposedHookLoadPackage {
         StealthManager.stealthLog("Hooking package: $packageName (Critical: $isCriticalApp, Banking: $isBankingApp)")
         
         try {
+            // Initialize advanced systems for this package
+            initializeAdvancedSystems(lpparam, isCriticalApp, isBankingApp)
+            
             // Apply stealth measures first
             applyStealthMeasures(lpparam, isCriticalApp, isBankingApp)
             
@@ -74,6 +77,52 @@ class MainHook : IXposedHookLoadPackage {
             
         } catch (e: Exception) {
             StealthManager.stealthLog("Failed to hook $packageName: ${e.message}")
+        }
+    }
+
+    /**
+     * Initialize advanced hooking systems for enhanced spoofing
+     */
+    private fun initializeAdvancedSystems(
+        lpparam: XC_LoadPackage.LoadPackageParam, 
+        isCriticalApp: Boolean, 
+        isBankingApp: Boolean
+    ) {
+        try {
+            val currentProfile = configManager?.getCurrentProfileSync()
+            if (currentProfile == null) {
+                StealthManager.stealthLog("No profile selected, using default")
+                return
+            }
+            
+            // Initialize Pixel-exclusive features for all packages
+            PixelExclusiveFeatures.getInstance().initializePixelFeatures(lpparam, currentProfile)
+            
+            // Initialize advanced attestation bypass for critical apps
+            if (isCriticalApp || isBankingApp) {
+                AttestationBypass.getInstance().initializeBypass(lpparam, currentProfile)
+                StealthManager.stealthLog("Advanced attestation bypass initialized")
+            }
+            
+            // Initialize native hooking for all Google services and banking apps
+            if (lpparam.packageName.startsWith("com.google") || isBankingApp || isCriticalApp) {
+                NativeHooking.getInstance().initializeNativeHooking(lpparam, currentProfile)
+                StealthManager.stealthLog("Native hooking initialized")
+            }
+            
+            // Initialize behavioral mimicking for system and critical apps
+            if (lpparam.packageName == "android" || 
+                lpparam.packageName.startsWith("com.google.android.gms") ||
+                lpparam.packageName == "com.android.systemui" ||
+                isCriticalApp) {
+                
+                val context = getApplicationContext(lpparam)
+                BehavioralMimicking.getInstance().initializeBehavioralMimicking(lpparam, currentProfile, context)
+                StealthManager.stealthLog("Behavioral mimicking initialized")
+            }
+            
+        } catch (e: Exception) {
+            StealthManager.stealthLog("Advanced systems initialization failed: ${e.message}")
         }
     }
     
