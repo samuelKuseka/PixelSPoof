@@ -32,10 +32,10 @@ class SimpleSpoofer : IXposedHookLoadPackage {
             XposedHelpers.setStaticObjectField(buildClass, "BRAND", "google")
             XposedHelpers.setStaticObjectField(buildClass, "MODEL", "Pixel 10 Pro XL")
             XposedHelpers.setStaticObjectField(buildClass, "DEVICE", "mustang")
-            XposedHelpers.setStaticObjectField(buildClass, "PRODUCT", "mustang")
+            XposedHelpers.setStaticObjectField(buildClass, "PRODUCT", "mustang_beta")
             XposedHelpers.setStaticObjectField(buildClass, "BOARD", "mustang")
             XposedHelpers.setStaticObjectField(buildClass, "HARDWARE", "mustang")
-            XposedHelpers.setStaticObjectField(buildClass, "FINGERPRINT", "google/mustang/mustang:16/BP41.250725.006/12701944:user/release-keys")
+            XposedHelpers.setStaticObjectField(buildClass, "FINGERPRINT", "google/mustang_beta/mustang:16/BP41.250725.006/12701944:user/release-keys")
             XposedHelpers.setStaticObjectField(buildClass, "TAGS", "release-keys")
             XposedHelpers.setStaticObjectField(buildClass, "TYPE", "user")
             XposedHelpers.setStaticObjectField(buildClass, "ID", "BP41.250725.006")
@@ -49,8 +49,9 @@ class SimpleSpoofer : IXposedHookLoadPackage {
             XposedHelpers.setStaticIntField(versionClass, "SDK_INT", 36)
             XposedHelpers.setStaticObjectField(versionClass, "SDK", "36")
             XposedHelpers.setStaticObjectField(versionClass, "INCREMENTAL", "12701944")
-            XposedHelpers.setStaticObjectField(versionClass, "SECURITY_PATCH", "2025-08-05")
             XposedHelpers.setStaticObjectField(versionClass, "CODENAME", "REL")
+            // Set security patch AFTER other fields to ensure it doesn't get overwritten
+            XposedHelpers.setStaticObjectField(versionClass, "SECURITY_PATCH", "2025-08-05")
             
             XposedBridge.log("SimpleSpoofer: Build fields set to Pixel 10 Pro XL for ${lpparam.packageName}")
             
@@ -100,6 +101,31 @@ class SimpleSpoofer : IXposedHookLoadPackage {
             
             XposedBridge.log("SimpleSpoofer: SystemProperties hooks installed for ${lpparam.packageName}")
             
+            // Add additional hook specifically for security patch to prevent it being overridden
+            try {
+                XposedHelpers.findAndHookMethod(
+                    "android.os.SystemProperties",
+                    lpparam.classLoader,
+                    "get",
+                    String::class.java,
+                    String::class.java,
+                    object : XC_MethodHook() {
+                        override fun beforeHookedMethod(param: MethodHookParam) {
+                            val key = param.args[0] as String
+                            if (key == "ro.build.version.security_patch" || key == "ro.vendor.build.security_patch") {
+                                param.result = "2025-08-05"
+                                XposedBridge.log("SimpleSpoofer: FORCED security patch = 2025-08-05")
+                            } else if (key == "ro.build.description") {
+                                param.result = "mustang_beta-user 16 BP41.250725.006 12701944 release-keys"
+                                XposedBridge.log("SimpleSpoofer: FORCED description = mustang_beta-user")
+                            }
+                        }
+                    }
+                )
+            } catch (e: Exception) {
+                XposedBridge.log("SimpleSpoofer: Error adding security patch force hook: ${e.message}")
+            }
+            
         } catch (e: Exception) {
             XposedBridge.log("SimpleSpoofer SystemProperties hook error: ${e.message}")
         }
@@ -111,9 +137,9 @@ class SimpleSpoofer : IXposedHookLoadPackage {
             "ro.product.brand" -> "google"
             "ro.product.model" -> "Pixel 10 Pro XL"
             "ro.product.device" -> "mustang"
-            "ro.product.name" -> "mustang"
+            "ro.product.name" -> "mustang_beta"
             "ro.product.board" -> "mustang"
-            "ro.build.fingerprint" -> "google/mustang/mustang:16/BP41.250725.006/12701944:user/release-keys"
+            "ro.build.fingerprint" -> "google/mustang_beta/mustang:16/BP41.250725.006/12701944:user/release-keys"
             "ro.build.id" -> "BP41.250725.006"
             "ro.build.display.id" -> "BP41.250725.006"
             "ro.build.version.release" -> "16"
@@ -123,6 +149,7 @@ class SimpleSpoofer : IXposedHookLoadPackage {
             "ro.vendor.build.security_patch" -> "2025-08-05"
             "ro.build.tags" -> "release-keys"
             "ro.build.type" -> "user"
+            "ro.build.description" -> "mustang_beta-user 16 BP41.250725.006 12701944 release-keys"
             "ro.hardware" -> "mustang"
             "ro.board.platform" -> "mustang"
             "ro.product.platform" -> "mustang"
