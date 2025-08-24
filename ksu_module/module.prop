@@ -1,0 +1,10 @@
+id=pixel_10_pro_xl_spoof
+name=Pixel 10 Pro XL System Spoofing
+version=v1.0.0
+versionCode=1
+author=PixelSpoof Team
+description=KernelSU module to spoof device as Pixel 10 Pro XL with Tensor G5 for Google Play certification and Pixel exclusive features. Works at system property level for complete spoofing.
+
+# KernelSU module requirements
+updateJson=
+support=https://github.com/samuelKuseka/PixelSPoof

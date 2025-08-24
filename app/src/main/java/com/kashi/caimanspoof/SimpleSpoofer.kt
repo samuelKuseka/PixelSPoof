@@ -7,12 +7,34 @@ class SimpleSpoofer : IXposedHookLoadPackage {
     
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         try {
-            // Apply Pixel 10 Pro XL spoofing to ALL apps without exclusions
+            // Skip problematic system apps that may crash with aggressive spoofing
+            if (shouldSkipPackage(lpparam.packageName)) {
+                XposedBridge.log("SimpleSpoofer: Skipping problematic package ${lpparam.packageName}")
+                return
+            }
+            
+            // Apply Pixel 10 Pro XL spoofing to compatible apps
             XposedBridge.log("SimpleSpoofer: Hooking package ${lpparam.packageName}")
             applyPixelSpoofing(lpparam)
         } catch (e: Exception) {
             XposedBridge.log("SimpleSpoofer error: ${e.message}")
         }
+    }
+    
+    private fun shouldSkipPackage(packageName: String): Boolean {
+        // Skip only specific problematic apps that crash with spoofing
+        val problematicApps = listOf(
+            "org.codeaurora.snapcam",           // Snapcam (causes crashes)
+            "com.miui.screenrecorder",          // Screen recorder (crashes)
+            "com.android.soundrecorder",        // Voice recorder (crashes)
+            "com.xiaomi.screenrecorder",        // Xiaomi recorder variants
+            "com.miui.camera",                  // MIUI camera
+            "com.android.systemui",             // System UI (critical)
+            "android"                           // System server (critical)
+        )
+        
+        // Exact match only to avoid false positives
+        return problematicApps.contains(packageName)
     }
     
     private fun applyPixelSpoofing(lpparam: XC_LoadPackage.LoadPackageParam) {
@@ -21,6 +43,9 @@ class SimpleSpoofer : IXposedHookLoadPackage {
         
         // Hook SystemProperties.get calls
         hookSystemProperties(lpparam)
+        
+        // Hook PackageManager.hasSystemFeature - THE KEY METHOD for Pixel exclusives
+        hookPackageManagerFeatures(lpparam)
     }
     
     private fun hookBuildFields(lpparam: XC_LoadPackage.LoadPackageParam) {
@@ -52,6 +77,9 @@ class SimpleSpoofer : IXposedHookLoadPackage {
             XposedHelpers.setStaticObjectField(versionClass, "SDK", "36")
             XposedHelpers.setStaticObjectField(versionClass, "INCREMENTAL", "12701944")
             XposedHelpers.setStaticObjectField(versionClass, "CODENAME", "REL")
+            // Add Pixel-specific version fields
+            XposedHelpers.setStaticObjectField(versionClass, "BASE_OS", "")
+            XposedHelpers.setStaticIntField(versionClass, "PREVIEW_SDK_INT", 0)
             // Set security patch AFTER other fields to ensure it doesn't get overwritten
             XposedHelpers.setStaticObjectField(versionClass, "SECURITY_PATCH", "2025-08-05")
             
@@ -138,6 +166,23 @@ class SimpleSpoofer : IXposedHookLoadPackage {
     }
     
     private fun getSystemPropertyValue(key: String): String? {
+        // Don't spoof security-critical properties that might affect device certification
+        val securityProperties = listOf(
+            "ro.boot.vbmeta.device_state",
+            "ro.boot.verifiedbootstate",
+            "ro.boot.veritymode", 
+            "ro.boot.flash.locked",
+            "ro.debuggable",
+            "ro.secure",
+            "ro.adb.secure",
+            "ro.build.selinux",
+            "ro.boot.selinux"
+        )
+        
+        if (securityProperties.contains(key)) {
+            return null // Don't modify security properties
+        }
+        
         return when (key) {
             "ro.product.manufacturer" -> "Google"
             "ro.product.brand" -> "google"
@@ -179,11 +224,120 @@ class SimpleSpoofer : IXposedHookLoadPackage {
             "ro.chipname" -> "Tensor G5"
             "ro.board.chipset" -> "Tensor G5"
             "ro.soc.platform" -> "mustang"
+            "ro.pixel.device" -> "true"
+            "ro.config.enable_pixel_features" -> "true"
+            "ro.hardware.chipset" -> "tensor"
+            "ro.config.pixel_2017" -> "true"
+            "ro.config.pixel_2018" -> "true"
+            "ro.config.pixel_2019" -> "true"
+            "ro.config.pixel_2020" -> "true"
+            "ro.config.pixel_2021" -> "true"
+            "ro.config.pixel_2022" -> "true"
+            "ro.config.pixel_2023" -> "true"
+            "ro.config.pixel_2024" -> "true"
+            "ro.config.pixel_2025" -> "true"
+            "ro.opa.eligible_device" -> "true"
+            "ro.com.google.gmsversion" -> "16_202508"
+            "ro.config.ringtone" -> "Pixel.ogg"
+            "ro.config.notification_sound" -> "Chime.ogg"
+            "ro.config.alarm_alert" -> "Flow.ogg"
+            "ro.google.camera.hal" -> "true"
+            "ro.camera.req.fmq.size" -> "268435456"
+            "ro.hardware.camera" -> "google"
+            "ro.hardware.fingerprint" -> "goodix"
+            "ro.build.characteristics" -> "nosdcard"
+            "persist.vendor.camera.privapp.list" -> "com.google.camera"
+            "ro.config.face_unlock_service" -> "true"
+            "ro.vendor.camera.extensions.package" -> "com.google.camera"
+            "ro.vendor.camera.extensions.service" -> "com.google.camera.extensions.service.PixelExtensions"
+            "ro.config.adaptive_brightness" -> "true"
+            "ro.config.auto_brightness_type" -> "1"
+            "ro.telephony.call_ring.multiple" -> "false"
+            "ro.config.vc_call_vol_steps" -> "7"
+            "ro.config.media_vol_steps" -> "25"
+            "persist.vendor.dpmhalservice.enable" -> "1"
+            "ro.config.always_on_display" -> "true"
+            "ro.config.ambient_display" -> "true"
+            "persist.vendor.radio.enable_voicecall" -> "1"
+            "ro.config.carrier_enabled" -> "true"
+            "ro.config.low_ram" -> "false"
+            "ro.vendor.qti.va_aosp.support" -> "1"
+            "ro.vendor.use_data_netmgrd" -> "true"
+            "ro.config.enable_quicksettings" -> "true"
+            "ro.config.enable_emergency_call" -> "true"
+            "ro.config.google_battery_saver" -> "true"
+            "ro.config.google_assistant" -> "true"
+            "ro.config.google_camera" -> "true"
+            "ro.config.google_photos_backup" -> "unlimited"
+            "ro.config.aicore_enabled" -> "true"
+            "ro.config.live_translate" -> "true"
+            "ro.config.call_screen" -> "true"
+            "ro.config.voice_translate" -> "true"
+            "ro.config.smart_compose" -> "true"
+            "ro.config.magic_cue" -> "true"
+            "ro.config.ai_camera_coach" -> "true"
+            "ro.build.expect.bootloader" -> "mustang-1.0-12701944"
+            "ro.build.expect.baseband" -> "g5150-105671-250725-B-12701944"
+            "persist.vendor.aicore.enabled" -> "1"
+            "ro.vendor.aicore.version" -> "16.0"
+            "ro.system.aicore.enabled" -> "true"
             "ro.product.cpu.abi" -> "arm64-v8a"
             "ro.product.cpu.abilist" -> "arm64-v8a,armeabi-v7a,armeabi"
             "ro.product.cpu.abilist32" -> "armeabi-v7a,armeabi"
             "ro.product.cpu.abilist64" -> "arm64-v8a"
             else -> null
+        }
+    }
+    
+    private fun hookPackageManagerFeatures(lpparam: XC_LoadPackage.LoadPackageParam) {
+        try {
+            // Hook the key method that Google apps use to detect Pixel features
+            XposedHelpers.findAndHookMethod(
+                "android.app.ApplicationPackageManager",
+                lpparam.classLoader,
+                "hasSystemFeature",
+                String::class.java,
+                object : XC_MethodHook() {
+                    override fun afterHookedMethod(param: MethodHookParam) {
+                        val featureName = param.args[0] as String
+                        if (isPixelSystemFeature(featureName)) {
+                            param.result = true
+                            XposedBridge.log("SimpleSpoofer: Enabled Pixel feature: $featureName")
+                        }
+                    }
+                }
+            )
+            
+            XposedBridge.log("SimpleSpoofer: PackageManager.hasSystemFeature hook installed for ${lpparam.packageName}")
+        } catch (e: Exception) {
+            XposedBridge.log("SimpleSpoofer PackageManager hook error: ${e.message}")
+        }
+    }
+    
+    private fun isPixelSystemFeature(featureName: String): Boolean {
+        return when (featureName) {
+            // Core Pixel features that Google apps check
+            "com.google.android.feature.PIXEL_EXPERIENCE" -> true
+            "com.google.android.feature.TURBO_PRELOADING" -> true
+            // AICore and AI features - CRUCIAL for Pixel AI exclusives
+            "com.google.android.feature.AICORE" -> true
+            "com.google.android.feature.LIVE_TRANSLATE" -> true
+            "com.google.android.feature.CALL_SCREEN" -> true
+            "com.google.android.feature.VOICE_TRANSLATE" -> true
+            "com.google.android.feature.SMART_COMPOSE" -> true
+            "com.google.android.feature.MAGIC_CUE" -> true
+            "com.google.android.feature.AI_CAMERA_COACH" -> true
+            "android.software.device_admin" -> true
+            "android.software.managed_users" -> true
+            "android.software.verified_boot" -> true
+            "android.hardware.camera.front" -> true
+            "android.hardware.camera.autofocus" -> true
+            "android.hardware.camera.flash" -> true
+            "android.software.picture_in_picture" -> true
+            "android.software.activities_on_secondary_displays" -> true
+            "android.software.backup" -> true
+            "android.software.secure_lock_screen" -> true
+            else -> false
         }
     }
 }
