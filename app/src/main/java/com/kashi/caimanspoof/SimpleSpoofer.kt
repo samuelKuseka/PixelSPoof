@@ -35,6 +35,8 @@ class SimpleSpoofer : IXposedHookLoadPackage {
             XposedHelpers.setStaticObjectField(buildClass, "PRODUCT", "mustang_beta")
             XposedHelpers.setStaticObjectField(buildClass, "BOARD", "mustang")
             XposedHelpers.setStaticObjectField(buildClass, "HARDWARE", "mustang")
+            XposedHelpers.setStaticObjectField(buildClass, "BOOTLOADER", "mustang-1.0-12701944")
+            XposedHelpers.setStaticObjectField(buildClass, "SERIAL", "33001FDD40019Y")
             XposedHelpers.setStaticObjectField(buildClass, "FINGERPRINT", "google/mustang_beta/mustang:16/BP41.250725.006/12701944:user/release-keys")
             XposedHelpers.setStaticObjectField(buildClass, "TAGS", "release-keys")
             XposedHelpers.setStaticObjectField(buildClass, "TYPE", "user")
@@ -75,6 +77,10 @@ class SimpleSpoofer : IXposedHookLoadPackage {
                         if (spoofedValue != null) {
                             param.result = spoofedValue
                             XposedBridge.log("SimpleSpoofer: Spoofed $key = $spoofedValue")
+                        }
+                        // Log SoC-related requests for debugging
+                        if (key.contains("soc") || key.contains("chip") || key.contains("cpu")) {
+                            XposedBridge.log("SimpleSpoofer: SoC-related request: $key = ${param.result}")
                         }
                     }
                 }
@@ -147,14 +153,32 @@ class SimpleSpoofer : IXposedHookLoadPackage {
             "ro.build.version.incremental" -> "12701944"
             "ro.build.version.security_patch" -> "2025-08-05"
             "ro.vendor.build.security_patch" -> "2025-08-05"
+            "ro.product.first_api_level" -> "36"
             "ro.build.tags" -> "release-keys"
             "ro.build.type" -> "user"
             "ro.build.description" -> "mustang_beta-user 16 BP41.250725.006 12701944 release-keys"
             "ro.hardware" -> "mustang"
             "ro.board.platform" -> "mustang"
             "ro.product.platform" -> "mustang"
+            "ro.bootloader" -> "mustang-1.0-12701944"
+            "ro.bootmode" -> "normal"
+            "ro.boot.bootloader" -> "mustang-1.0-12701944"
+            "ro.serialno" -> "33001FDD40019Y"
+            "ro.boot.serialno" -> "33001FDD40019Y"
             "ro.soc.model" -> "Tensor G5"
             "ro.soc.manufacturer" -> "Google"
+            "ro.boot.hardware" -> "mustang"
+            "ro.boot.hardware.sku" -> "mustang"
+            "ro.product.hardware.sku" -> "mustang"
+            "ro.boot.cpuid" -> "0x80481100"  // Tensor G5 CPU ID
+            "persist.radio.chipset_id" -> "1"
+            "ro.vendor.soc.manufacturer" -> "Google"
+            "ro.vendor.soc.model" -> "Tensor G5"
+            "ro.system.soc.manufacturer" -> "Google"
+            "ro.system.soc.model" -> "Tensor G5"
+            "ro.chipname" -> "Tensor G5"
+            "ro.board.chipset" -> "Tensor G5"
+            "ro.soc.platform" -> "mustang"
             "ro.product.cpu.abi" -> "arm64-v8a"
             "ro.product.cpu.abilist" -> "arm64-v8a,armeabi-v7a,armeabi"
             "ro.product.cpu.abilist32" -> "armeabi-v7a,armeabi"
