@@ -154,9 +154,9 @@ fun ConfigScreen(
                 SettingsSection(viewModel = viewModel)
             }
             
-            // Info Section
+            // About Section
             item {
-                InfoCard()
+                AboutCard()
             }
         }
     }
@@ -403,10 +403,10 @@ fun SettingsSection(
 }
 
 /**
- * Information card
+ * About section with developer information
  */
 @Composable
-fun InfoCard() {
+fun AboutCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -417,9 +417,54 @@ fun InfoCard() {
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "⚠️ Important Information",
+                text = "📱 About PixelSpoof",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
+            )
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            Text(
+                text = "PixelSpoof - Advanced Device Fingerprint Spoofing",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Text(
+                text = "Comprehensive Xposed module for spoofing device properties " +
+                       "with real-time property interception, advanced anti-detection, " +
+                       "and safety-first kernel integration.",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Developer Information
+            Text(
+                text = "👨‍💻 Developer",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Text(
+                text = "• Developer: kashi265\n" +
+                       "• Telegram: @Kekashi265\n" +
+                       "• Email: ace265brown@gmail.com\n" +
+                       "• GitHub: github.com/samuelKuseka/PixelSPoof",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Important Information
+            Text(
+                text = "⚠️ Important Notes",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold
             )
             
             Spacer(modifier = Modifier.height(8.dp))
@@ -427,8 +472,28 @@ fun InfoCard() {
             Text(
                 text = "• Reboot required after changing profiles\n" +
                        "• Profiles auto-update daily from GitHub\n" +
-                       "• Enable stealth mode for banking apps\n" +
-                       "• Some features require hardware support",
+                       "• Comprehensive property interception active\n" +
+                       "• Device safety measures implemented\n" +
+                       "• Compatible with LSPosed framework",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Version Information
+            Text(
+                text = "📦 Version Information",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Text(
+                text = "• Version: 2.0.0 (Comprehensive Spoofing)\n" +
+                       "• Build: August 2025 - Enhanced Edition\n" +
+                       "• Features: 200+ Properties, Safety-First Design\n" +
+                       "• License: GNU GPL v3.0",
                 style = MaterialTheme.typography.bodyMedium
             )
         }

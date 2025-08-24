@@ -13,9 +13,9 @@
         android:supportsRtl="true"
         tools:targetApi="31">
 
-        <!-- Configuration Activity -->
+        <!-- Main Activity -->
         <activity
-            android:name=".ConfigActivity"
+            android:name=".ui.MainActivity"
             android:label="PixelSpoof Settings"
             android:exported="true">
             <intent-filter>

@@ -56,7 +56,8 @@ class MainHook : IXposedHookLoadPackage {
         val isCriticalApp = packageName in criticalApps
         val isBankingApp = packageName in bankingApps
         
-        StealthManager.stealthLog("Hooking package: $packageName (Critical: $isCriticalApp, Banking: $isBankingApp)")
+        // Log EVERY package that gets hooked to verify the module is working
+        StealthManager.stealthLog("🎯 PIXELSPOOF ACTIVE - Hooking package: $packageName (Critical: $isCriticalApp, Banking: $isBankingApp)")
         
         try {
             // Initialize advanced systems for this package
@@ -73,10 +74,17 @@ class MainHook : IXposedHookLoadPackage {
                 applyIntegrityBypass(lpparam)
             }
             
-            StealthManager.stealthLog("Successfully hooked $packageName")
+            // Add debug testing for device info apps
+            if (packageName.contains("device") || packageName.contains("info") || packageName.contains("cpu") || packageName.contains("hardware")) {
+                StealthManager.stealthLog("🔍 Detected device info app: $packageName - Adding debug hooks")
+                PropertyDebugger.setupTestHooks(lpparam)
+            }
+            
+            StealthManager.stealthLog("✅ Successfully hooked $packageName - Spoofing should be active!")
             
         } catch (e: Exception) {
-            StealthManager.stealthLog("Failed to hook $packageName: ${e.message}")
+            StealthManager.stealthLog("❌ Failed to hook $packageName: ${e.message}")
+            e.printStackTrace()
         }
     }
 
@@ -194,23 +202,17 @@ class MainHook : IXposedHookLoadPackage {
     }
     
     /**
-     * Apply device spoofing using current profile
+     * Apply device spoofing using current profile - NOW WITH REAL PROPERTY INTERCEPTION!
      */
     private fun applyDeviceSpoofing(lpparam: XC_LoadPackage.LoadPackageParam, isCriticalApp: Boolean) {
         val profile = configManager?.getCurrentProfileSync() ?: DeviceProfile.getPixel10ProXL()
         
-        StealthManager.stealthLog("Applying profile: ${profile.displayName}")
+        StealthManager.stealthLog("🎯 Applying COMPREHENSIVE spoofing with profile: ${profile.displayName}")
         
-        // Apply Build class spoofing
-        applyBuildSpoofing(profile)
+        // Initialize the REAL property spoofer that actually works!
+        PropertySpoofer.getInstance().initializePropertySpoofing(lpparam, profile)
         
-        // Apply system properties
-        applySystemProperties(profile)
-        
-        // Apply enhanced spoofing for critical apps
-        if (isCriticalApp) {
-            applyEnhancedSpoofing(lpparam, profile)
-        }
+        StealthManager.stealthLog("✅ COMPREHENSIVE property spoofing activated - Device info apps will now see spoofed data!")
     }
     
     /**
